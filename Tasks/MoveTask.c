@@ -45,16 +45,16 @@ void MoveTask_Function(void const * argument)
 		//printf("Yaw=%f,YawError=%f\r\n",Yaw,YawError);
 		//printf("(%d,%f)\r\n",SetCarAngle,imu.yaw);
 		switch (MoveMode){
-			case Stop:
+			case Stop:  
 				MotorRightSet(0);
 				MotorLeftSet(0);
 				PID_clear(&ANGLE_Z_PID);
 				break;
-			case OpenLoop:
+			case OpenLoop:  //no pid
 				MotorRightSet(Move_S + Move_A);
 				MotorLeftSet(Move_S - Move_A);
 				break;
-			case Drive:
+			case Drive:  //move straight with imu correct
 				ANGLE_Z_PID.set=0;
 				ANGLE_Z_PID.fdb = YawError;
 				PID_Calc(&ANGLE_Z_PID);
@@ -72,13 +72,14 @@ void MoveTask_Function(void const * argument)
 				MotorRightSet(Move_S + ANGLE_Z_PID.out);
 				MotorLeftSet(Move_S - ANGLE_Z_PID.out);
 				break;
-			case DetectLine:
+			case DetectLine: //follow line wiht imu or without imu
 				Error = -LineError();   //follow line
-				if(Move_S>0)ANGLE_Z_PID.set =Error*3;  //need to run straight,more err correct
-				else ANGLE_Z_PID.set = -Error*2;  //less err correct
 
-				// ANGLE_Z_PID.fdb = YawError;  //imu err
-				ANGLE_Z_PID.fdb=0;
+				if(Move_S>0)ANGLE_Z_PID.set =Error*1.5;  //need to run straight,more err correct
+				else ANGLE_Z_PID.set = -Error*1;  //less err correct
+
+				ANGLE_Z_PID.fdb = YawError;  //imu err
+				// ANGLE_Z_PID.fdb=0;
 
 				PID_Calc(&ANGLE_Z_PID);
 				if(Move_S>0)
