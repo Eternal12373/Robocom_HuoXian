@@ -33,7 +33,8 @@ uint8_t RunMode = 0;
 
 
 unsigned char test_gray[12];
-
+int i;
+int j;
 /**
  * @brief RunTask任务函数
  * 
@@ -41,17 +42,19 @@ unsigned char test_gray[12];
  */
 void RunTask_Function(void const * argument)
 {
-
+    
     unsigned int tim=0;
     portTickType tick = 0;
     while(1)
     {
         tick = xTaskGetTickCount();
-
-        get_gray(test_gray);   // 获取灰度值
-
+			  MoveMode=DetectLine;        // 进入巡线模式（低速，车方向角度0），检测到右侧交叉路口停车
+        SetCarSpeed=LowSpeed;
+//				get_gray(test_gray);
+//			__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, i);
+//			__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, j);
 		//printf("%d, %d, %d, %d\r\n", Openmv.x, Openmv.y, Openmv.h, Openmv.m);
-#if 1
+#if 0
         switch(RunMode)
         {
             case 0:                           
@@ -64,12 +67,12 @@ void RunTask_Function(void const * argument)
             case 1:
                 if(tim<900)      // 夹爪开合
                 {
-                    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 1200);
+                    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 1700);  //1600 loose
                 }
                 else
                 {
-                    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 1500);
-                    tim=0;
+                    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 2500); //2500 catch
+                    tim=0; 
                     RunMode++;
                 }
                 break;
@@ -77,7 +80,7 @@ void RunTask_Function(void const * argument)
                 MoveMode=DetectLine;        // 进入巡线模式（低速，车方向角度0），检测到右侧交叉路口停车
                 SetCarSpeed=LowSpeed;      
                 CarAngle=0; //tim>200
-                if(CrossDetect(CrossRight)&&tim>10){
+                if(CrossDetect(CrossRight)&&tim>200){
                     tim=0;
                     MoveMode=Stop;
                     RunMode++;
@@ -531,3 +534,4 @@ static void StraightUntil(int16_t SetStraightSpeed,int16_t SetAngle,uint8_t Cros
         }
     }    
 }
+

@@ -23,8 +23,8 @@ void ServoInit(void)
     HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);    // 开启定时器4的PWM波输出
     HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);    // 开启定时器4的PWM波输出
     HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);    // 开启定时器4的PWM波输出
-    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 1500);    // 设置初始的PWM占空比为1500
-    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 1000);    // 设置初始的PWM占空比为1000
+    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 1700);    // 设置初始的PWM占空比为1500
+    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 1500);    // 设置初始的PWM占空比为1000
     __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, 1500);    // 设置初始的PWM占空比为1500
     __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 1500);    // 设置初始的PWM占空比为1500
 }
@@ -36,7 +36,7 @@ void ServoInit(void)
  */
 void ServoGrab(void)                                     
 {
-    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 1700);    // 设置舵机2的PWM占空比为1700
+    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 2500);    // 设置舵机2的PWM占空比为1700
 }
 
 /**
@@ -46,7 +46,7 @@ void ServoGrab(void)
  */
 void ServoRelease(void)                                     
 {
-    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 1000);    // 设置舵机2的PWM占空比为1000
+    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 1500);    // 设置舵机2的PWM占空比为1000
 }
 
 /**

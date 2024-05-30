@@ -35,13 +35,13 @@ void MoveTask_Function(void const * argument)
 	while(1)
 	{
 		tick = xTaskGetTickCount();
-		Yaw = imu.yaw+tick/7000;
-		Move_A = SetCarAngle;
-		Move_S = SetCarSpeed;
-		YawError=Yaw-Move_A;
-		if(YawError<-180)YawError+=360;
-		else if(YawError>180)YawError-=360;
-		Error = LineError();
+		Yaw = imu.yaw+tick/7000; //yaw after suppress zero drift
+		Move_A = SetCarAngle;  //global angle
+		Move_S = SetCarSpeed;  //run speed
+		YawError=Yaw-Move_A;   //angle err
+		if(YawError<-180)YawError+=360; //limit
+		else if(YawError>180)YawError-=360; //limit
+		Error = LineError();   //follow line
 		//printf("Yaw=%f,YawError=%f\r\n",Yaw,YawError);
 		//printf("(%d,%f)\r\n",SetCarAngle,imu.yaw);
 		switch (MoveMode){
@@ -73,10 +73,13 @@ void MoveTask_Function(void const * argument)
 				MotorLeftSet(Move_S - ANGLE_Z_PID.out);
 				break;
 			case DetectLine:
-				Error = -LineError();
-				if(Move_S>0)ANGLE_Z_PID.set =Error*3;
-				else ANGLE_Z_PID.set = -Error*2;
-				ANGLE_Z_PID.fdb = YawError;
+				Error = -LineError();   //follow line
+				if(Move_S>0)ANGLE_Z_PID.set =Error*3;  //need to run straight,more err correct
+				else ANGLE_Z_PID.set = -Error*2;  //less err correct
+
+				// ANGLE_Z_PID.fdb = YawError;  //imu err
+				ANGLE_Z_PID.fdb=0;
+
 				PID_Calc(&ANGLE_Z_PID);
 				if(Move_S>0)
 				{
