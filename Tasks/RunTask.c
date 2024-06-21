@@ -70,11 +70,11 @@ void RunTask_Function(void const *argument)
         case 1:
             if (tim < 900) // ¼Ð×¦¿ªºÏ
             {
-                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 1700); // 1700 loose  PD13 TIM_CHANNEL_2 ¼Ð×¦
+                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 2500); // 1700 loose  PD13 TIM_CHANNEL_2 ¼Ð×¦
             }
             else
             {
-                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 2500); // 2500 catch
+                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 1600); // 2500 catch
                 tim = 0;
                 RunMode++;
             }
