@@ -31,8 +31,8 @@ int turn_flag = 0;
 uint8_t RunMode = 0;
 
 unsigned char test_gray[12];
-int i;
-int j;
+int i=0;
+int j=1500;
 /**
  * @brief RunTask任务函数
  *
@@ -50,11 +50,14 @@ void RunTask_Function(void const *argument)
         // TurnStraightUntil(LowSpeed,90,Crossing);
         // 		  MoveMode=DetectLine;        // 进入巡线模式（低速，车方向角度0），检测到右侧交叉路口停车
         //    SetCarSpeed=LowSpeed;
-//				get_gray(test_gray);
-//			__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, i);
-//			__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, j);
-// printf("%d, %d, %d, %d\r\n", Openmv.x, Openmv.y, Openmv.h, Openmv.m);
-#if 0
+        //				get_gray(test_gray);
+        			// __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, i);
+//        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, j);
+        // printf("%d, %d, %d, %d\r\n", Openmv.x, Openmv.y, Openmv.h, Openmv.m);
+//        MoveMode = Drive;
+//        SetCarSpeed = LowSpeed;
+//        CarAngle = i;
+#if 1
         switch (RunMode)
         {
         case 0:
@@ -67,11 +70,11 @@ void RunTask_Function(void const *argument)
         case 1:
             if (tim < 900) // 夹爪开合
             {
-                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 1700); // 1600 loose
+                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 1700); // 1700 loose  PD13 TIM_CHANNEL_2 夹爪
             }
             else
             {
-                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 2500); // 2500 catch
+                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 2500); // 2500 catch
                 tim = 0;
                 RunMode++;
             }
@@ -213,7 +216,7 @@ static uint8_t SingleCircle(void)
         else if (SingleTim < 700) // 中速后退，航向角 -90度
         {
             MoveMode = Drive;
-            SetCarSpeed = -MediumSpeed;
+            SetCarSpeed = -LowSpeed;
             CarAngle = -90;
         }
         else
@@ -512,7 +515,6 @@ static void TurnStraightUntil(int16_t SetStraightSpeed, int16_t SetTurnAngle, ui
             {
                 TurnStraightSign = 0;
                 SingleMode++;
-                turn_flag = 0;
             }
         }
     }
@@ -527,7 +529,6 @@ static void TurnStraightUntil(int16_t SetStraightSpeed, int16_t SetTurnAngle, ui
             MoveMode = Stop;
             TurnStraightSign = 0;
             SingleMode++;
-            turn_flag = 0;
         }
     }
     else if (TurnStraightSign == 3)
@@ -541,7 +542,6 @@ static void TurnStraightUntil(int16_t SetStraightSpeed, int16_t SetTurnAngle, ui
             MoveMode = Stop;
             TurnStraightSign = 0;
             SingleMode++;
-            turn_flag = 0;
         }
     }
     // }
