@@ -46,7 +46,7 @@ void ServoGrab(void)
  */
 void ServoRelease(void)                                     
 {
-    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 1600);    // 设置舵机2的PWM占空比为1000
+    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 1200);    // 设置舵机2的PWM占空比为1000
 }
 
 /**

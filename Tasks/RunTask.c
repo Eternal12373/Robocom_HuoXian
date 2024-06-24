@@ -68,13 +68,13 @@ void RunTask_Function(void const *argument)
             }
             break;
         case 1:
-            if (tim < 900) // 夹爪开合
+            if (tim < 900) // 夹爪开合 1200 loose ；2500 catch
             {
-                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 2500); // 1700 loose  PD13 TIM_CHANNEL_2 夹爪
+                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 2500); 
             }
             else
             {
-                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 1600); // 2500 catch
+                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 1200); 
                 tim = 0;
                 RunMode++;
             }
@@ -106,16 +106,17 @@ void RunTask_Function(void const *argument)
             }
             break;
         case 5:
-            if (tim < 900)
-            {
-                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 1200);
-            }
-            else
-            {
-                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 1500);
-                tim = 0;
-                RunMode++;
-            }
+            // if (tim < 900) 
+            // {
+            //     __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 1200); //下降一段距离，夹取下一个沙包
+            // }
+            // else
+            // {
+            //     __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 1500); //停止
+            //     tim = 0;
+            //     RunMode++;
+            // }
+            RunMode++; //不需要下降
             break;
         case 6: // 巡线（高速，航向角180，检测到左侧路口停车）
             MoveMode = DetectLine;
@@ -144,17 +145,18 @@ void RunTask_Function(void const *argument)
             }
             break;
         case 9:
-            if (tim < 900)
-            {
-                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 1200);
-            }
-            else
-            {
-                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 1500);
-                tim = 0;
-                RunMode++;
-                SingleTim = 0;
-            }
+            // if (tim < 900) //下降的距离
+            // {
+            //     __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 1200); //下降一段距离，夹取下一个沙包
+            // }
+            // else
+            // {
+            //     __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 1500);
+            //     tim = 0;
+            //     RunMode++;
+            //     SingleTim = 0;
+            // }
+            RunMode++;
             break;
         case 10: // 进入singlecircle函数，跑单圈
             if (SingleCircle())
@@ -211,7 +213,7 @@ static uint8_t SingleCircle(void)
         break;
     case 1:
 
-        if (SingleTim < 500)
+        if (SingleTim < 600)
             ServoGrab();          // 抓取
         else if (SingleTim < 700) // 中速后退，航向角 -90度
         {
@@ -265,6 +267,26 @@ static uint8_t SingleCircle(void)
         {
             MoveMode = Stop;
         }
+        else if(SingleTim < 800)
+        {
+            ServoRelease();
+        }
+        else if (SingleTim < 1200)
+        {
+            MoveMode = Drive;
+            SetCarSpeed = -MediumSpeed;
+            CarAngle = -90;
+        }        
+        else if (SingleTim < 8000) //停一会 等传送带
+        {
+            MoveMode = Stop;
+        }
+        else
+        {
+            SingleTim = 0;
+            SingleMode++;
+        }
+#if 0
         else if (SingleTim < 800)
         {
             __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 1200);
@@ -286,6 +308,7 @@ static uint8_t SingleCircle(void)
             MoveMode = Stop;
             SingleMode++;
         }
+#endif
         break;
     case 13:
         StraightUntil(-MediumSpeed, -90, CrossLeft); // 后退 （中速， 航向角-90度，检测到左侧路口停车）
@@ -317,7 +340,7 @@ static uint8_t SingleCircle(void)
             CarAngle = 45;
         SetCarAngle = 90 + CarAngle;
         LastCarAngle = CarAngle;
-        if (Openmv.h > 950 && Openmv.y < -45 && abs(Openmv.x) < 4)
+        if (Openmv.h > 950 && Openmv.y < -40 && abs(Openmv.x) < 4)
         {
             BallColor = Openmv.m;
             SingleTim = 0;
@@ -326,7 +349,7 @@ static uint8_t SingleCircle(void)
         }
         break;
     case 18:
-        if (SingleTim < 1600) // 夹取
+        if (SingleTim < 700) // 夹取 //夹取时下降高度，前面已有Servoup,到最高
         {
             __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 850);
         }
@@ -341,7 +364,7 @@ static uint8_t SingleCircle(void)
         MoveMode = OpenLoop;
         SetCarSpeed = 600;
         SetCarAngle = 0;
-        if (SingleTim > 600)
+        if (SingleTim > 800)
         {
             ServoGrab();
             SingleTim = 0;
@@ -438,6 +461,10 @@ static uint8_t SingleCircle(void)
             SetCarSpeed = -MediumSpeed;
             CarAngle = 90;
         }
+        else
+        {
+            SingleMode++;
+        }
         break;
     case 33:
         StraightUntil(-LowSpeed, 90, Crossing);
@@ -480,7 +507,7 @@ static void TurnStraightUntil(int16_t SetStraightSpeed, int16_t SetTurnAngle, ui
     // {
     if (TurnStraightSign == 0) // 车航向角设定  （转向模式）
     {
-        if (SingleTim < 200)
+        if (SingleTim < 50)
         {
             MoveMode = OpenLoop;
             SetCarSpeed = LowSpeed;
