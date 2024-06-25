@@ -34,7 +34,7 @@ unsigned char CrossDetect(unsigned char Cross){
     // 根据检测类型进行不同的判断
     switch (Cross){
         case Crossing:
-            if(gray[0]+gray[1]+gray[2]+gray[3]+gray[4]+gray[5]+gray[6]+gray[7]+gray[8] > 6) return 1;
+            if(gray[0]+gray[1]+gray[2]+gray[3]+gray[4]+gray[5]+gray[6]+gray[7]+gray[8] > 4) return 1;
             break;
         case CrossRight:
             if(gray[5]+gray[6]+gray[7]+gray[8] >= 2) return 1;

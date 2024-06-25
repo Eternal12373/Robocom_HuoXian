@@ -15,9 +15,9 @@
 
 #include "main.h"
 
-#define ANGLE_SPEED_PID_KP 15.0f
+#define ANGLE_SPEED_PID_KP 20.0f
 #define ANGLE_SPEED_PID_KI 0.5f
-#define ANGLE_SPEED_PID_KD 100.0f
+#define ANGLE_SPEED_PID_KD 120.0f
 #define ANGLE_SPEED_PID_MAX_OUT 1000
 #define ANGLE_SPEED_PID_MAX_IOUT 100
 

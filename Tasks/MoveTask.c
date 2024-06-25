@@ -20,7 +20,9 @@ extern imu_t imu;
 extern uint8_t MoveMode;
 extern int SetCarSpeed,SetCarAngle;
 
-
+float yaw_debug;
+float yaw_ori;
+int cor=7000;
 void MoveTask_Function(void const * argument)
 {
 	float Move_A;
@@ -35,7 +37,10 @@ void MoveTask_Function(void const * argument)
 	while(1)
 	{
 		tick = xTaskGetTickCount();
-		Yaw = imu.yaw+tick/7000; //yaw after suppress zero drift
+		Yaw = imu.yaw+tick/7000; //yaw after suppress zero drift	ori=7000
+		yaw_debug=imu.yaw+tick/cor;
+		yaw_ori=imu.yaw;
+		
 		Move_A = SetCarAngle;  //global angle
 		Move_S = SetCarSpeed;  //run speed
 		YawError=Yaw-Move_A;   //angle err

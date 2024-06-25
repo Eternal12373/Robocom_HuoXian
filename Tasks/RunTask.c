@@ -215,7 +215,7 @@ static uint8_t SingleCircle(void)
 
         if (SingleTim < 600)
             ServoGrab();          // 抓取
-        else if (SingleTim < 700) // 中速后退，航向角 -90度
+        else if (SingleTim < 900) // 中速后退，航向角 -90度
         {
             MoveMode = Drive;
             SetCarSpeed = -LowSpeed;
@@ -393,13 +393,13 @@ static uint8_t SingleCircle(void)
         MoveMode = Drive;
         SetCarSpeed = MediumSpeed;
         CarAngle = 0;
-        if (CrossDetect(Crossing) && SingleTim > 800)
+        if (CrossDetect(Crossing) && SingleTim > 1000) //防止识别到圆环
         {
             SingleTim = 0;
             MoveMode = Stop;
             SingleMode++;
         }
-        else if (CrossDetect(CrossNum) > 1 && SingleTim < 1200)
+        else if (CrossDetect(CrossNum) > 1 && SingleTim < 1400)
         {
             if (SingleTim > 600)
                 SingleTim = 600;
@@ -408,8 +408,8 @@ static uint8_t SingleCircle(void)
     case 23:
         MoveMode = Drive;
         SetCarSpeed = -MediumSpeed;
-        CarAngle = 0;
-        if (SingleTim > 200)
+        CarAngle = 15;
+        if (SingleTim > 250)  //从圆环到变现的倒车
         {
             SingleTim = 0;
             MoveMode = Stop;
@@ -417,7 +417,7 @@ static uint8_t SingleCircle(void)
         }
         break;
     case 24:
-        TurnStraightUntil(HighSpeed, 90, Crossing);
+        TurnStraightUntil(HighSpeed, 90, CrossRight);
         break;
     case 25:
         TurnStraightUntil(HighSpeed, 180, CrossLeft);
@@ -507,7 +507,7 @@ static void TurnStraightUntil(int16_t SetStraightSpeed, int16_t SetTurnAngle, ui
     // {
     if (TurnStraightSign == 0) // 车航向角设定  （转向模式）
     {
-        if (SingleTim < 50)
+        if (SingleTim < 230)
         {
             MoveMode = OpenLoop;
             SetCarSpeed = LowSpeed;
